@@ -1,8 +1,17 @@
 ﻿// mpTransmitterServer.h : Include file for standard system include files,
 // or project specific include files.
 
+#pragma once
 
+
+#ifdef __linux__
 #include <iostream>
-#include <thread>
+#include "Linux/Networking.h"
+#endif
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#include <iostream>
+#include <fstream>
 
-// TODO: Reference additional headers your program requires here.
+#include "Windows/Networking_W.h"
+
+#endif 

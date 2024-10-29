@@ -1,15 +1,40 @@
-﻿# CMakeList.txt : CMake project for mpTransmitterServer, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required(VERSION 3.30)
 
-# Add source to this project's executable.
-add_executable (mpTransmitterServer "mpTransmitterServer.cpp" "mpTransmitterServer.h" )
 
-# TODO: Add tests and install targets if needed.
+# Enable C++20
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-    if (_cpp_latest_flag_supported)
-        add_compile_options("/std:c++latest")
-    endif()
+# Enable the vcpkg toolchain
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "C:/zzzzilhan/programlar/vcpkg-2024.09.30/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+endif()
+
+# Add executable target
+add_executable(mpTransmitterServer 
+    "mpTransmitterServer.cpp" 
+    "mpTransmitterServer.h" 
+    "Windows/Networking_W.cpp" 
+    "Windows/Networking_W.h" 
+    "Linux/Networking.cpp" 
+    "Linux/Networking.h" 
+    "Windows/HTTP_R_Handlers_W.cpp" 
+    "Windows/HTTP_R_Handlers_W.h" 
+    "Windows/Session_Control_W.h" 
+    "Windows/Session_Control_W.cpp" 
+    
+)
+
+# Find Poco components using vcpkg integration
+find_package(Poco REQUIRED COMPONENTS Foundation Net Util Data DataSQLite DataODBC)
+
+# Link Poco libraries
+target_link_libraries(mpTransmitterServer PRIVATE 
+    Poco::Foundation 
+    Poco::Net 
+    Poco::Util 
+    Poco::Data 
+    Poco::DataSQLite 
+)
+
+message("Your CMAKE Version is: ${CMAKE_VERSION}")
