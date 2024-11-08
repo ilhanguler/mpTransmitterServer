@@ -20,10 +20,10 @@ add_executable(mpTransmitterServer
     "Linux/Networking.h" 
     "Windows/HTTP_R_Handlers_W.cpp" 
     "Windows/HTTP_R_Handlers_W.h" 
-    "Windows/Session_Control_W.h" 
-    "Windows/Session_Control_W.cpp" 
+    "Windows/SessionAuth_W.h" 
+    "Windows/SessionAuth_W.cpp" 
     
-)
+ "Windows/Dumpster.h")
 
 # Find Poco components using vcpkg integration
 find_package(Poco REQUIRED COMPONENTS Foundation Net Util Data DataSQLite DataODBC)
