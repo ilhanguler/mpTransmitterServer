@@ -23,7 +23,7 @@ add_executable(mpTransmitterServer
     "Windows/SessionAuth_W.h" 
     "Windows/SessionAuth_W.cpp" 
     
- "Windows/Dumpster.h")
+ "TrashBin/Dumpster.h" "Windows/DOM_W.h" "Windows/DOM_W.cpp" "Windows/HTML_Reader_W.h" "Windows/HTML_Reader_W.cpp")
 
 # Find Poco components using vcpkg integration
 find_package(Poco REQUIRED COMPONENTS Foundation Net Util Data DataSQLite DataODBC)

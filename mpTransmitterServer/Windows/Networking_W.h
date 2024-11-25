@@ -42,25 +42,25 @@ using namespace Poco::Data::Keywords;
 
 class HTTPServerApp : public Poco::Util::ServerApplication {
 protected:
-    int main(const std::vector<std::string>& args) override {
+	int main(const std::vector<std::string>& args) override {
 
-        ServerSocket svs(8080);
+		ServerSocket svs(8080);
 
-        HTTPServerParams* params = new HTTPServerParams;
-        params->setMaxQueued(100);
-        params->setMaxThreads(100);
-        
-        AuthManager authManager;
+		HTTPServerParams* params = new HTTPServerParams;
+		params->setMaxQueued(100);
+		params->setMaxThreads(100);
+		
+		AuthManager authManager;
 
-        HTTPServer server(new RequestHandlerFactory(authManager), svs, params);
-        server.start();
+		HTTPServer server(new RequestHandlerFactory(authManager), svs, params);
+		server.start();
 
-        std::cout << "Server started on http://localhost:8080" << std::endl;
-        
-        waitForTerminationRequest();
-        server.stop();
-        return Application::EXIT_OK;
-    }
+		std::cout << "Server started on http://localhost:8080" << std::endl;
+		
+		waitForTerminationRequest();
+		server.stop();
+		return Application::EXIT_OK;
+	}
 };
 
 #endif
