@@ -1,29 +1,22 @@
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #include "DOM_W.h"
 
-
+// Custom Data Object Model
 namespace dom {
 
-	class element {
-	public:
-		std::string tag;
-		std::map<std::string, std::string> properties;
-		size_t index;
+	// Node constructor
+	element::element(std::string_view tag, const std::map<std::string, std::string>& properties) {
+		this->tag = tag;
+		this->properties = properties;
+	}
 
-		std::vector<element*> children;
-		element* head = nullptr;
+	// Node constructor
+	element::element(std::string_view tag) {
+		this->tag = tag;
+	}
 
-		element(std::string& tag, std::map<std::string, std::string>& properties) {
-			this->tag = tag;
-			this->properties = properties;
-		}
-
-		element(std::string& tag) {
-			this->tag = tag;
-		}
-	};
-
-	element* addElement(element*& parent, std::string& tag, std::map<std::string, std::string>& properties) {
+	// Add node into given node input
+	element* addElement(element*& parent, std::string_view tag, const std::map<std::string, std::string>& properties) {
 		element* child = new element(tag, properties);
 		child->head = parent;
 		parent->children.push_back(child);
@@ -32,58 +25,65 @@ namespace dom {
 	}
 
 	// Do not use. It is not ready.
-	void delElement(element* element) {
-		if (!element->children.empty()) {
-			for (auto child : element->children) {
-				delElement(child);
-			}
+	bool delTree(element*& parent) {
+		auto& children = parent->children;
+		size_t s = children.size();
+		if (s == 0) {
+			element* tobedeleted = parent;
+			moveOut(parent);
+			delete tobedeleted;
 		}
 		else {
-			delete element;
+			for (size_t i = 0; i < s; i++) {
+				delTree(children.at(i));
+			}
 		}
+		return true;
 	}
 
-	void moveOut(element*& parent) {
+	// Move to parent
+	bool moveOut(element*& parent) {
+		if (parent->head == nullptr) {
+			return false;
+		}
 		parent = parent->head;
+		return true;
 	}
 
-	void moveIn(element*& parent, size_t index) {
+	// Move to child at given index
+	bool moveIn(element*& parent, size_t index) {
+		if (parent->children.size() < index) {
+			return false;
+		}
 		parent = parent->children.at(index);
+		return true;
 	}
 
-	void next(element*& parent) {
+	// Move to next node that belongs to the same parent
+	bool moveNext(element*& parent) {
+		if ((parent->head == nullptr) || (parent->head->children.size() < parent->index + 1)) {
+			return false;
+		}
 		parent = parent->head->children.at(parent->index + 1);
+		return true;
 	}
 
-	void previous(element*& parent) {
+	// Move to previous node that belongs to the same parent
+	bool movePrvs(element*& parent) {
+		if ((parent->head == nullptr) || (parent->index < 1)) {
+			return false;
+		}
 		parent = parent->head->children.at(parent->index - 1);
 	}
 
+	// Move to top of the tree
+	bool moveTop(element*& parent) {
+		for (; moveOut(parent) == true;) {
+
+		}
+		return true;
+	}
+
 }
 
-// Scribble. Do not use.
-namespace domalt {
-
-	class test {
-	public:
-		std::string tag;
-		std::map<std::string, std::string> properties;
-
-		std::vector<test*> children;
-
-		test(std::string& tag, std::map<std::string, std::string>& properties) {
-			this->tag = tag;
-			this->properties = properties;
-		}
-
-		test(std::string& tag) {
-			this->tag = tag;
-		}
-
-		test() {
-
-		}
-	};
-
-}
 #endif
