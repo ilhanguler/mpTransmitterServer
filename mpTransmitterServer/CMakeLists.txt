@@ -2,7 +2,7 @@
 
 
 # Enable C++20
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable the vcpkg toolchain
@@ -37,4 +37,5 @@ target_link_libraries(mpTransmitterServer PRIVATE
     Poco::DataSQLite 
 )
 
-message("Your CMAKE Version is: ${CMAKE_VERSION}")
+message("Your CMAKE Version: ${CMAKE_VERSION}")
+message("C++ Version Setting (Not Guaranteed): ${CMAKE_CXX_STANDARD}")
