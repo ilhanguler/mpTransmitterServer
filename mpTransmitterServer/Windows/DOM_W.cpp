@@ -5,44 +5,49 @@
 namespace dom {
 
 	// Node constructor
-	element::element(std::string_view tag, const std::map<std::string, std::string>& properties) {
+	Element::Element(std::string_view tag, const std::map<std::string, std::string>& properties) {
 		this->tag = tag;
 		this->properties = properties;
 	}
 
 	// Node constructor
-	element::element(std::string_view tag) {
+	Element::Element(std::string_view tag) {
 		this->tag = tag;
 	}
 
+	Element::~Element() { };
+
 	// Add node into given node input
-	element* addElement(element*& parent, std::string_view tag, const std::map<std::string, std::string>& properties) {
-		element* child = new element(tag, properties);
+	Element* addElement(Element*& parent, std::string_view tag, const std::map<std::string, std::string>& properties) {
+		Element* child = new Element(tag, properties);
 		child->head = parent;
 		parent->children.push_back(child);
 		child->index = parent->children.size() - 1;
 		return child;
 	}
 
-	// Do not use. It is not ready.
-	bool delTree(element*& parent) {
-		auto& children = parent->children;
-		size_t s = children.size();
-		if (s == 0) {
-			element* tobedeleted = parent;
-			moveOut(parent);
-			delete tobedeleted;
+	// Deletes whole tree.
+	bool delTree(Element*& parent) {
+		moveTop(parent);
+		return delSubTree(parent);
+	}
+
+	// Deletes sub tree that belongs to the current parent and parents itself.
+	bool delSubTree(Element*& parent) {
+
+		for (size_t i = 0; moveIn(parent, i); i++) {
+			delSubTree(parent);
 		}
-		else {
-			for (size_t i = 0; i < s; i++) {
-				delTree(children.at(i));
-			}
-		}
+
+		Element* tobedeleted = parent;
+		moveOut(parent);
+		delete tobedeleted;
+
 		return true;
 	}
 
 	// Move to parent
-	bool moveOut(element*& parent) {
+	bool moveOut(Element*& parent) {
 		if (parent->head == nullptr) {
 			return false;
 		}
@@ -51,8 +56,8 @@ namespace dom {
 	}
 
 	// Move to child at given index
-	bool moveIn(element*& parent, size_t index) {
-		if (parent->children.size() < index) {
+	bool moveIn(Element*& parent, size_t index) {
+		if (parent->children.size() <= index) {
 			return false;
 		}
 		parent = parent->children.at(index);
@@ -60,8 +65,8 @@ namespace dom {
 	}
 
 	// Move to next node that belongs to the same parent
-	bool moveNext(element*& parent) {
-		if ((parent->head == nullptr) || (parent->head->children.size() < parent->index + 1)) {
+	bool moveNext(Element*& parent) {
+		if ((parent->head == nullptr) || (parent->head->children.size() <= (parent->index + 1))) {
 			return false;
 		}
 		parent = parent->head->children.at(parent->index + 1);
@@ -69,16 +74,16 @@ namespace dom {
 	}
 
 	// Move to previous node that belongs to the same parent
-	bool movePrvs(element*& parent) {
-		if ((parent->head == nullptr) || (parent->index < 1)) {
+	bool movePrvs(Element*& parent) {
+		if ((parent->head == nullptr) || (parent->index == 0)) {
 			return false;
 		}
 		parent = parent->head->children.at(parent->index - 1);
 	}
 
 	// Move to top of the tree
-	bool moveTop(element*& parent) {
-		for (; moveOut(parent) == true;) {
+	bool moveTop(Element*& parent) {
+		for (; moveOut(parent); ) {
 
 		}
 		return true;

@@ -1,8 +1,4 @@
 #pragma once
-// TODO:
-// 1. Null safe implementation
-// 2. Implement moving between elements safely
-// 3. Deletion and addition logic overhaul is a must.
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 
@@ -12,46 +8,60 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <string_view>
 
 // Custom Data Object Model
 namespace dom {
 
-	class element {
+	class Element {
 	public:
+		// HTML element tag name
 		std::string tag;
+
+		// HTML tag properties
 		std::map<std::string, std::string> properties;
-		size_t index;
 
-		std::vector<element*> children;
-		element* head = nullptr;
+		// Index of DOM object in a parent. Default value (-1) means it has not a parent
+		size_t index = -1;
+
+		// List of pointers to children of this object
+		std::vector<Element*> children;
+
+		// Pointer to parent of this object
+		Element* head = nullptr;
 
 		// Node constructor
-		element(std::string_view tag, const std::map<std::string, std::string>& properties);
+		Element(std::string_view tag, const std::map<std::string, std::string>& properties);
 
-		// Node constructor
-		element(std::string_view tag);
+		// Node constructor, handy for the beginning of a tree.
+		Element(std::string_view tag);
+
+		~Element();
 	};
 
 	// Add node into given node input
-	element* addElement(element*& parent, std::string_view tag, const std::map<std::string, std::string>& properties);
+	Element* addElement(Element*& parent, std::string_view tag, const std::map<std::string, std::string>& properties);
+
+	// Deletes whole tree.
+	bool delTree(Element*& parent);
 
 	// Do not use. It is not ready.
-	bool delTree(element*& parent);
+	bool delSubTree(Element*& parent);
 
 	// Move to parent
-	bool moveOut(element*& parent);
+	bool moveOut(Element*& parent);
 
 	// Move to child at given index
-	bool moveIn(element*& parent, size_t index);
+	bool moveIn(Element*& parent, size_t index);
 
 	// Move to next node that belongs to the same parent
-	bool moveNext(element*& parent);
+	bool moveNext(Element*& parent);
 
 	// Move to previous node that belongs to the same parent
-	bool movePrvs(element*& parent);
+	bool movePrvs(Element*& parent);
 
 	// Move to top of the tree
-	bool moveTop(element*& parent);
+	bool moveTop(Element*& parent);
 }
 
 #endif
