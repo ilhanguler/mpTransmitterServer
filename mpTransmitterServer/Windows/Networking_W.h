@@ -30,6 +30,8 @@
 #include <Poco/UUIDGenerator.h>
 #include <Poco/File.h>
 #include <Poco/Net/HTTPServerSession.h>
+#include <Poco/URI.h>
+#include <Poco/Net/HTTPSClientSession.h>
 
 #include "SessionAuth_W.h"
 #include "HTTP_R_Handlers_W.h"
@@ -62,6 +64,8 @@ protected:
 		return Application::EXIT_OK;
 	}
 };
+
+
 
 #endif
 
